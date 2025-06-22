@@ -2,41 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hi! I'm a tab! :O</title>
+<title>Hi I'm a tab! :O</title>
 <style>
-  /* ─── DARK-MODE PALETTE ─────────────────────────────── */
+  /* ◾ 1. DARK THEME ROOT COLORS ---------------------------------------- */
   :root{
-    --bg:        #121212;  /* page background */
-    --card-bg:   #1e1e1e;  /* tile background */
-    --text:      #eee;     /* primary text */
-    --subtext:   #aaa;     /* filenames */
-    --shadow:    rgba(0,0,0,.6);
+    --bg:        #121212;   /* page */
+    --card-dark: #1e1e1e;   /* default tile */
+    --card-light:#fafafa;   /* fallback tile for dark loaders */
+    --text:      #eee;      /* headings */
+    --subtext:   #666;      /* filenames on light cards */
   }
 
-  /* ─── LAYOUT ─────────────────────────────────────────── */
-  body{
-    font-family:sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    margin:0;
-    padding:2rem;
-  }
-  h1{
-    text-align:center;
-    margin-bottom:1.5rem;
-  }
+  /* ◾ 2. LAYOUT --------------------------------------------------------- */
+  body{font-family:sans-serif;background:var(--bg);color:var(--text);margin:0;padding:2rem}
+  h1{text-align:center;margin-bottom:1.5rem}
   .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
     gap:1rem;
   }
   .card{
-    background:var(--card-bg);
+    background:var(--card-dark);
     border-radius:8px;
     padding:.5rem;
-    box-shadow:0 2px 5px var(--shadow);
+    box-shadow:0 2px 6px rgba(0,0,0,.6);
     text-align:center;
+    transition:background .3s;
   }
+  .card.light-card{         /* activated for black loaders */
+    background:var(--card-light);
+  }
+
   .name{
     font-size:.7rem;
     margin-top:.4rem;
@@ -44,44 +40,53 @@
     color:var(--subtext);
   }
 
-  /* ─── MEDIA ELEMENTS ─────────────────────────────────── */
-  .card img,
-  .card video{
-    display:block;
-    margin:0 auto;
-    max-width:100%;
-    max-height:120px;
-    /* dual halo so black *or* white loaders are visible */
-    filter:
-      drop-shadow(0 0 3px rgba(0,0,0,.9))
-      drop-shadow(0 0 3px rgba(255,255,255,.9));
+  /* ◾ 3. MEDIA ---------------------------------------------------------- */
+  .card img,.card video{
+    display:block;margin:0 auto;
+    max-width:100%;max-height:120px;
   }
-
-  /* keep static images lively */
-  .spin{animation:spin 6s linear infinite;}
+  .spin{animation:spin 6s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
+
 <body>
-<h1> Elliot’s Loading Bar Museum</h1>
+<h1>Elliot’s Loading Bar Museum</h1>
 <div id="gallery" class="grid"></div>
 
 <script>
 /* ==== CONFIG ==== */
 const owner = "Elliotisnt";
 const repo  = "loading-bars";
-const path  = "Waiting%20Bar%20Collection";   // folder inside repo
+const path  = "Waiting%20Bar%20Collection";
 
 const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
 const ANIMATED = /\.(gif|apng|webm)$/i;
 
+/* tiny canvas reused to sample brightness */
+const probe = document.createElement("canvas");
+probe.width = probe.height = 1;
+const ctx = probe.getContext("2d");
+
+function isDark(img){
+  try{
+    ctx.clearRect(0,0,1,1);
+    ctx.drawImage(img,0,0,1,1);          // shrink to 1×1
+    const [r,g,b] = ctx.getImageData(0,0,1,1).data;
+    const lum = 0.2126*r + 0.7152*g + 0.0722*b;  // perceived brightness
+    return lum < 60;                              // tweak threshold as needed
+  }catch{
+    return false; // CORS fallback
+  }
+}
+
 /* ==== RENDER ==== */
 (async ()=>{
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
-  const files = await res.json();
+  const res  = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
+  const list = await res.json();
   const gallery = document.getElementById("gallery");
 
-  files.filter(f=>ALLOWED.test(f.name)).forEach(file=>{
+  list.filter(f=>ALLOWED.test(f.name)).forEach(file=>{
     const card = document.createElement("div");
     card.className = "card";
 
@@ -89,17 +94,22 @@ const ANIMATED = /\.(gif|apng|webm)$/i;
     if (/\.webm$/i.test(file.name)){
       media = document.createElement("video");
       Object.assign(media,{src:file.download_url,autoplay:true,loop:true,muted:true});
+      // videos are usually coloured; leave card dark
     } else {
       media = document.createElement("img");
+      media.crossOrigin = "anonymous";   // allow canvas sampling
       media.src = file.download_url;
+      media.onload = ()=>{               // decide card tone after load
+        if (isDark(media)){ card.classList.add("light-card"); }
+      };
       if (!ANIMATED.test(file.name)) media.classList.add("spin");
     }
 
-    const caption = document.createElement("div");
-    caption.className = "name";
-    caption.textContent = file.name;
+    const cap = document.createElement("div");
+    cap.className = "name";
+    cap.textContent = file.name;
 
-    card.append(media,caption);
+    card.append(media,cap);
     gallery.append(card);
   });
 })();
