@@ -77,33 +77,40 @@
   const path  = "Waiting%20Bar%20Collection";
   const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
   const ANIMATED = /\.(gif|apng|webm)$/i;
-  /* RENDER */
+
+  /* RENDER WITH RANDOM ORDER */
   (async ()=>{
     const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
     const files = await res.json();
     const gallery = document.getElementById("gallery");
-    files
-      .filter(f => ALLOWED.test(f.name))
-      .forEach(file => {
-        const card = document.createElement("div");
-        card.className = "card";
-        let media;
-        if (/\.webm$/i.test(file.name)){
-          media = document.createElement("video");
-          Object.assign(media, {src: file.download_url, autoplay: true, loop: true, muted: true});
-          media.preload = "none";
-        } else {
-          media = document.createElement("img");
-          media.src = file.download_url;
-          media.loading = "lazy";
-          if (!ANIMATED.test(file.name)) media.classList.add("spin");
-        }
-        const caption = document.createElement("div");
-        caption.className = "name";
-        caption.textContent = file.name;
-        card.append(media, caption);
-        gallery.append(card);
-      });
+
+    // filter and shuffle
+    const items = files.filter(f => ALLOWED.test(f.name));
+    items.sort(() => Math.random() - 0.5);
+
+    items.forEach(file => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      let media;
+      if (/\.webm$/i.test(file.name)){
+        media = document.createElement("video");
+        Object.assign(media, {src: file.download_url, autoplay: true, loop: true, muted: true});
+        media.preload = "none";
+      } else {
+        media = document.createElement("img");
+        media.src = file.download_url;
+        media.loading = "lazy";
+        if (!ANIMATED.test(file.name)) media.classList.add("spin");
+      }
+
+      const caption = document.createElement("div");
+      caption.className = "name";
+      caption.textContent = file.name;
+
+      card.append(media, caption);
+      gallery.append(card);
+    });
   })();
   </script>
 </body>
