@@ -1,108 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Hi! I'm a tab! :O</title>
-<style>
-  /* ─── DARK-MODE PALETTE ─────────────────────────────── */
-  :root{
-    --bg:        #121212;  /* page background */
-    --card-bg:   #1e1e1e;  /* tile background */
-    --text:      #eee;     /* primary text */
-    --subtext:   #aaa;     /* filenames */
-    --shadow:    rgba(0,0,0,.6);
-  }
-
-  /* ─── LAYOUT ─────────────────────────────────────────── */
-  body{
-    font-family:sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    margin:0;
-    padding:2rem;
-  }
-  h1{
-    text-align:center;
-    margin-bottom:1.5rem;
-  }
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-    gap:1rem;
-  }
-  .card{
-    background:var(--card-bg);
-    border-radius:8px;
-    padding:.5rem;
-    box-shadow:0 2px 5px var(--shadow);
-    text-align:center;
-  }
-  .name{
-    font-size:.7rem;
-    margin-top:.4rem;
-    word-break:break-all;
-    color:var(--subtext);
-  }
-
-  /* ─── MEDIA ELEMENTS ─────────────────────────────────── */
-  .card img,
-  .card video{
-    display:block;
-    margin:0 auto;
-    max-width:100%;
-    max-height:120px;
-    /* dual halo so black *or* white loaders are visible */
-    filter:
-      drop-shadow(0 0 3px rgba(0,0,0,.9))
-      drop-shadow(0 0 3px rgba(255,255,255,.9));
-  }
-
-  /* keep static images lively */
-  .spin{animation:spin 6s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elliot’s Loading Bar Museum</title>
+  <style>
+    /* DARK-MODE PALETTE */
+    :root{
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #eee;
+      --subtext: #aaa;
+      --shadow: rgba(0,0,0,.6);
+    }
+    /* LAYOUT */
+    body{
+      font-family:sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      margin:0;
+      padding:2rem;
+    }
+    h1{
+      text-align:center;
+      margin-bottom:1.5rem;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+      gap:1rem;
+    }
+    .card{
+      background:var(--card-bg);
+      border-radius:8px;
+      padding:.5rem;
+      box-shadow:0 2px 5px var(--shadow);
+      text-align:center;
+    }
+    .name{
+      font-size:.7rem;
+      margin-top:.4rem;
+      word-break:break-all;
+      color:var(--subtext);
+    }
+    /* MEDIA ELEMENTS */
+    .card img,
+    .card video{
+      display:block;
+      margin:0 auto;
+      max-width:100%;
+      max-height:120px;
+      filter:
+        drop-shadow(0 0 3px rgba(0,0,0,.9))
+        drop-shadow(0 0 3px rgba(255,255,255,.9));
+    }
+    .spin{animation:spin 6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* MOBILE OPTIMIZATIONS */
+    @media (max-width: 600px){
+      body {padding:1rem;}
+      .grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.5rem;}
+      .card{padding:0.5rem 0.25rem;}
+      .card img,
+      .card video{max-height:80vw;}
+    }
+  </style>
 </head>
 <body>
-<h1> Elliot’s Loading Bar Museum</h1>
-<div id="gallery" class="grid"></div>
+  <h1>Elliot’s Loading Bar Museum</h1>
+  <div id="gallery" class="grid"></div>
 
-<script>
-/* ==== CONFIG ==== */
-const owner = "Elliotisnt";
-const repo  = "loading-bars";
-const path  = "Waiting%20Bar%20Collection";   // folder inside repo
-
-const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
-const ANIMATED = /\.(gif|apng|webm)$/i;
-
-/* ==== RENDER ==== */
-(async ()=>{
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
-  const files = await res.json();
-  const gallery = document.getElementById("gallery");
-
-  files.filter(f=>ALLOWED.test(f.name)).forEach(file=>{
-    const card = document.createElement("div");
-    card.className = "card";
-
-    let media;
-    if (/\.webm$/i.test(file.name)){
-      media = document.createElement("video");
-      Object.assign(media,{src:file.download_url,autoplay:true,loop:true,muted:true});
-    } else {
-      media = document.createElement("img");
-      media.src = file.download_url;
-      if (!ANIMATED.test(file.name)) media.classList.add("spin");
-    }
-
-    const caption = document.createElement("div");
-    caption.className = "name";
-    caption.textContent = file.name;
-
-    card.append(media,caption);
-    gallery.append(card);
-  });
-})();
-</script>
+  <script>
+  /* CONFIG */
+  const owner = "Elliotisnt";
+  const repo  = "loading-bars";
+  const path  = "Waiting%20Bar%20Collection";
+  const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
+  const ANIMATED = /\.(gif|apng|webm)$/i;
+  /* RENDER */
+  (async ()=>{
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
+    const files = await res.json();
+    const gallery = document.getElementById("gallery");
+    files
+      .filter(f => ALLOWED.test(f.name))
+      .forEach(file => {
+        const card = document.createElement("div");
+        card.className = "card";
+        let media;
+        if (/\.webm$/i.test(file.name)){
+          media = document.createElement("video");
+          Object.assign(media, {src: file.download_url, autoplay: true, loop: true, muted: true});
+          media.preload = "none";
+        } else {
+          media = document.createElement("img");
+          media.src = file.download_url;
+          media.loading = "lazy";
+          if (!ANIMATED.test(file.name)) media.classList.add("spin");
+        }
+        const caption = document.createElement("div");
+        caption.className = "name";
+        caption.textContent = file.name;
+        card.append(media, caption);
+        gallery.append(card);
+      });
+  })();
+  </script>
 </body>
 </html>
