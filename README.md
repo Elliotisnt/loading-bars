@@ -1,4 +1,10 @@
-Live Website: https://elliotisnt.github.io/loading-bars/
+Live Website: <a
+  href="https://elliotisnt.github.io/loading-bars/"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  https://elliotisnt.github.io/loading-bars/
+</a>
 
 A dark-mode gallary of loading bars from various webpages I've visited. The list is randomized every time to the page is open to prevent alphabetic sorting.
 
