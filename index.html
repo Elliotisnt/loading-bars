@@ -8,19 +8,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    /* === DEEP ORANGE AMBER PALETTE === */
+    /* === PALETTE === */
     :root {
       --bg: #0a0806;
-      --bg-screen: #060504;
+      --bg-screen: #050403;
       --amber: #d4740a;
-      --amber-bright: #e8850f;
       --amber-dim: #a85a08;
-      --amber-glow: rgba(212, 116, 10, 0.7);
-      --bezel: #1a1510;
-      --bezel-light: #2a2218;
+      --amber-glow: rgba(212, 116, 10, 0.6);
+      --bezel-dark: #0f0c0a;
+      --bezel-mid: #1a1612;
+      --bezel-light: #252018;
     }
 
-    /* === GLOBAL RESET & BASE === */
     *, *::before, *::after {
       box-sizing: border-box;
     }
@@ -35,259 +34,131 @@
       font-family: 'Orbitron', monospace, sans-serif;
       background: var(--bg);
       color: var(--amber);
-      overflow-x: hidden;
-    }
-
-    /* === CRT EFFECTS CONTAINER === */
-    .crt-wrap {
-      position: relative;
-      min-height: 100vh;
-      padding: 2.5rem;
-    }
-
-    /* Scanlines */
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent 0px,
-        transparent 3px,
-        rgba(0, 0, 0, 0.15) 3px,
-        rgba(0, 0, 0, 0.15) 6px
-      );
-      pointer-events: none;
-      z-index: 1000;
-      animation: scan-move 8s linear infinite;
-    }
-
-    @keyframes scan-move {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 60px; }
-    }
-
-    /* Vignette */
-    .vignette {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(
-        ellipse at center,
-        transparent 0%,
-        transparent 50%,
-        rgba(0, 0, 0, 0.5) 85%,
-        rgba(0, 0, 0, 0.85) 100%
-      );
-      pointer-events: none;
-      z-index: 1001;
-    }
-
-    /* Phosphor glow */
-    .glow {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(
-        ellipse at center,
-        rgba(212, 116, 10, 0.04) 0%,
-        transparent 60%
-      );
-      pointer-events: none;
-      z-index: 997;
-      animation: glow-pulse 3s ease-in-out infinite;
-    }
-
-    @keyframes glow-pulse {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
-
-    /* Flicker */
-    .crt-wrap {
-      animation: flicker 5s infinite;
-    }
-
-    @keyframes flicker {
-      0%, 100% { opacity: 1; }
-      97% { opacity: 1; }
-      97.5% { opacity: 0.94; }
-      98% { opacity: 1; }
+      padding: 2rem;
     }
 
     /* === HEADER === */
     .header {
       text-align: center;
-      margin-bottom: 2.5rem;
-      padding: 1rem 0;
+      margin-bottom: 3rem;
     }
 
     .title {
-      font-size: clamp(0.6rem, 2vw, 0.95rem);
+      font-size: clamp(0.7rem, 2.5vw, 1.1rem);
       font-weight: 700;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.4em;
       text-transform: uppercase;
       margin: 0;
       color: var(--amber);
-      text-shadow: 
-        0 0 10px var(--amber-glow),
-        0 0 25px rgba(212, 116, 10, 0.5);
-    }
-
-    /* === CIRCUIT LINES SVG LAYER === */
-    #circuit-svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    #circuit-svg line {
-      stroke: var(--amber-dim);
-      stroke-width: 1.5;
-      opacity: 0.4;
-    }
-
-    #circuit-svg circle {
-      fill: var(--amber);
-      opacity: 0.6;
+      transform: scaleX(1.4) scaleY(0.75);
+      transform-origin: center;
     }
 
     /* === GRID === */
-    .gallery-wrap {
-      position: relative;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 2rem;
       max-width: 1200px;
       margin: 0 auto;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 2.5rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* === CHUNKY CRT MONITOR CARDS === */
+    /* === CRT MONITOR === */
     .card {
       position: relative;
       aspect-ratio: 1;
-      padding-bottom: 18px; /* Space for stand */
+      padding-bottom: 20px;
     }
 
-    /* Monitor body/housing */
+    /* Monitor housing */
     .monitor-body {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      bottom: 18px;
+      bottom: 20px;
       background: linear-gradient(
         180deg,
-        #2a2420 0%,
-        #1a1612 40%,
-        #0f0c0a 100%
+        var(--bezel-light) 0%,
+        var(--bezel-mid) 30%,
+        var(--bezel-dark) 100%
       );
-      border-radius: 8px 8px 4px 4px;
       border: 3px solid var(--amber);
-      box-shadow:
-        0 0 15px rgba(212, 116, 10, 0.25),
-        inset 0 1px 0 rgba(255, 200, 150, 0.1);
+      border-radius: 6px 6px 3px 3px;
     }
 
-    /* Thick front bezel frame */
-    .monitor-bezel {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      right: 8px;
-      bottom: 26px;
-      background: linear-gradient(
-        145deg,
-        #1f1a16 0%,
-        #151210 100%
-      );
-      border: 3px solid var(--amber-dim);
-      border-radius: 4px;
-    }
-
-    /* Inner screen recess */
+    /* Screen area */
     .monitor-screen {
       position: absolute;
-      top: 14px;
-      left: 14px;
-      right: 14px;
+      top: 10px;
+      left: 10px;
+      right: 10px;
       bottom: 32px;
       background: var(--bg-screen);
       border: 2px solid var(--amber);
       border-radius: 2px;
-      box-shadow:
-        inset 0 0 30px rgba(0, 0, 0, 0.9),
-        inset 0 0 60px rgba(212, 116, 10, 0.03),
-        0 0 10px var(--amber-glow);
       overflow: hidden;
+    }
+
+    /* Scanlines - only on monitor screen */
+    .monitor-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 0, 0, 0.2) 2px,
+        rgba(0, 0, 0, 0.2) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Screen glow */
+    .monitor-screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 20px rgba(212, 116, 10, 0.1);
+      pointer-events: none;
+      z-index: 9;
     }
 
     /* Power LED */
     .monitor-led {
       position: absolute;
-      bottom: 8px;
+      bottom: 6px;
       left: 50%;
       transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       background: var(--amber);
       border-radius: 50%;
-      box-shadow: 0 0 6px var(--amber-glow), 0 0 12px var(--amber-glow);
-      animation: led-pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 4px var(--amber-glow);
     }
 
-    @keyframes led-pulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
-    }
-
-    /* Monitor stand neck */
-    .monitor-stand-neck {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 14px;
-      background: linear-gradient(
-        90deg,
-        #1a1612 0%,
-        #2a2420 50%,
-        #1a1612 100%
-      );
-      border: 2px solid var(--amber-dim);
-      border-top: none;
-    }
-
-    /* Monitor stand base */
-    .monitor-stand-base {
+    /* Stand */
+    .monitor-stand {
       position: absolute;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 50px;
-      height: 10px;
-      background: linear-gradient(
-        180deg,
-        #2a2420 0%,
-        #1a1612 100%
-      );
+      width: 40px;
+      height: 20px;
+      background: var(--bezel-mid);
       border: 2px solid var(--amber);
-      border-radius: 2px 2px 4px 4px;
+      border-radius: 0 0 4px 4px;
+      clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
     }
 
     /* Media container */
     .media-container {
       position: absolute;
-      top: 18px;
-      left: 18px;
-      right: 18px;
+      top: 14px;
+      left: 14px;
+      right: 14px;
       bottom: 36px;
       display: flex;
       align-items: center;
@@ -304,11 +175,11 @@
       display: block;
     }
 
-    /* Spin for static images - smaller to not clip */
+    /* Spin for static images */
     .spin {
       animation: spin 6s linear infinite;
-      max-width: 70% !important;
-      max-height: 70% !important;
+      max-width: 65% !important;
+      max-height: 65% !important;
       width: auto !important;
       height: auto !important;
     }
@@ -319,53 +190,21 @@
 
     /* === MOBILE === */
     @media (max-width: 600px) {
-      .crt-wrap {
-        padding: 1.5rem;
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        margin-bottom: 2rem;
+      }
+
+      .title {
+        transform: scaleX(1.2) scaleY(0.8);
       }
 
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 1.5rem;
-      }
-
-      .monitor-body {
-        border-width: 2px;
-      }
-
-      .monitor-bezel {
-        top: 6px;
-        left: 6px;
-        right: 6px;
-        bottom: 22px;
-        border-width: 2px;
-      }
-
-      .monitor-screen {
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        bottom: 26px;
-      }
-
-      .media-container {
-        top: 14px;
-        left: 14px;
-        right: 14px;
-        bottom: 30px;
-      }
-
-      .monitor-stand-neck {
-        width: 16px;
-        height: 12px;
-      }
-
-      .monitor-stand-base {
-        width: 40px;
-        height: 8px;
-      }
-
-      .title {
-        letter-spacing: 0.15em;
       }
     }
 
@@ -378,30 +217,19 @@
   </style>
 </head>
 <body>
-  <div class="glow"></div>
-  <div class="scanlines"></div>
-  <div class="vignette"></div>
-
-  <div class="crt-wrap">
-    <header class="header">
-      <h1 class="title">PLEASE FEEL FREE TO WAIT A WHILE</h1>
-    </header>
-    
-    <div class="gallery-wrap">
-      <svg id="circuit-svg"></svg>
-      <div id="gallery" class="grid"></div>
-    </div>
-  </div>
+  <header class="header">
+    <h1 class="title">PLEASE FEEL FREE TO WAIT A WHILE</h1>
+  </header>
+  
+  <div id="gallery" class="grid"></div>
 
   <script>
-  /* CONFIG */
   const owner = "Elliotisnt";
   const repo  = "loading-bars";
   const path  = "Waiting%20Bar%20Collection";
   const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
   const ANIMATED = /\.(gif|apng|webm)$/i;
 
-  /* RENDER CARDS */
   (async () => {
     const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
     const files = await res.json();
@@ -414,12 +242,8 @@
       const card = document.createElement("div");
       card.className = "card";
 
-      // Monitor parts
       const body = document.createElement("div");
       body.className = "monitor-body";
-
-      const bezel = document.createElement("div");
-      bezel.className = "monitor-bezel";
 
       const screen = document.createElement("div");
       screen.className = "monitor-screen";
@@ -427,11 +251,8 @@
       const led = document.createElement("div");
       led.className = "monitor-led";
 
-      const standNeck = document.createElement("div");
-      standNeck.className = "monitor-stand-neck";
-
-      const standBase = document.createElement("div");
-      standBase.className = "monitor-stand-base";
+      const stand = document.createElement("div");
+      stand.className = "monitor-stand";
 
       const mediaContainer = document.createElement("div");
       mediaContainer.className = "media-container";
@@ -456,130 +277,10 @@
       }
 
       mediaContainer.appendChild(media);
-      card.append(body, bezel, screen, led, standNeck, standBase, mediaContainer);
+      card.append(body, screen, led, stand, mediaContainer);
       gallery.appendChild(card);
     });
-
-    // Draw circuit lines after cards render
-    requestAnimationFrame(() => {
-      setTimeout(drawCircuitLines, 100);
-    });
   })();
-
-  /* DRAW BRANCHING CIRCUIT LINES */
-  function drawCircuitLines() {
-    const svg = document.getElementById("circuit-svg");
-    const cards = document.querySelectorAll(".card");
-    const wrap = document.querySelector(".gallery-wrap");
-    
-    if (!wrap || cards.length < 2) return;
-
-    const wrapRect = wrap.getBoundingClientRect();
-    svg.setAttribute("viewBox", `0 0 ${wrapRect.width} ${wrapRect.height}`);
-    svg.style.width = wrapRect.width + "px";
-    svg.style.height = wrapRect.height + "px";
-
-    // Get card centers relative to gallery-wrap
-    const centers = Array.from(cards).map(card => {
-      const rect = card.getBoundingClientRect();
-      return {
-        x: rect.left - wrapRect.left + rect.width / 2,
-        y: rect.top - wrapRect.top + rect.height / 2
-      };
-    });
-
-    // Create connections - each card connects to 1-2 nearby cards
-    const connections = [];
-    const connected = new Set();
-
-    centers.forEach((center, i) => {
-      if (connected.size >= centers.length * 1.5) return;
-      
-      // Find nearest unconnected or sparsely connected neighbors
-      const distances = centers
-        .map((other, j) => ({ j, dist: Math.hypot(other.x - center.x, other.y - center.y) }))
-        .filter(d => d.j !== i && d.dist < 400)
-        .sort((a, b) => a.dist - b.dist);
-
-      const numConnections = Math.random() > 0.5 ? 2 : 1;
-      
-      for (let k = 0; k < Math.min(numConnections, distances.length); k++) {
-        const target = distances[k].j;
-        const key = [Math.min(i, target), Math.max(i, target)].join("-");
-        
-        if (!connected.has(key)) {
-          connected.add(key);
-          connections.push({ from: center, to: centers[target] });
-        }
-      }
-    });
-
-    // Draw lines with right-angle bends
-    connections.forEach(conn => {
-      const { from, to } = conn;
-      
-      // Random bend style
-      const bendStyle = Math.random();
-      let path;
-      
-      if (bendStyle < 0.4) {
-        // Horizontal then vertical
-        const midX = from.x + (to.x - from.x) * (0.3 + Math.random() * 0.4);
-        path = [
-          { x: from.x, y: from.y },
-          { x: midX, y: from.y },
-          { x: midX, y: to.y },
-          { x: to.x, y: to.y }
-        ];
-      } else if (bendStyle < 0.8) {
-        // Vertical then horizontal
-        const midY = from.y + (to.y - from.y) * (0.3 + Math.random() * 0.4);
-        path = [
-          { x: from.x, y: from.y },
-          { x: from.x, y: midY },
-          { x: to.x, y: midY },
-          { x: to.x, y: to.y }
-        ];
-      } else {
-        // Direct diagonal
-        path = [
-          { x: from.x, y: from.y },
-          { x: to.x, y: to.y }
-        ];
-      }
-
-      // Draw path segments
-      for (let i = 0; i < path.length - 1; i++) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", path[i].x);
-        line.setAttribute("y1", path[i].y);
-        line.setAttribute("x2", path[i + 1].x);
-        line.setAttribute("y2", path[i + 1].y);
-        svg.appendChild(line);
-      }
-
-      // Add node dots at bends
-      path.forEach((point, idx) => {
-        if (idx > 0 && idx < path.length - 1) {
-          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle.setAttribute("cx", point.x);
-          circle.setAttribute("cy", point.y);
-          circle.setAttribute("r", 3);
-          svg.appendChild(circle);
-        }
-      });
-    });
-  }
-
-  // Redraw on resize
-  let resizeTimeout;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      document.getElementById("circuit-svg").innerHTML = "";
-      drawCircuitLines();
-    }, 200);
-  });
   </script>
 </body>
 </html>
