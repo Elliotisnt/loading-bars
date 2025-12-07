@@ -8,17 +8,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    /* === TVA-STYLE AMBER PHOSPHOR PALETTE === */
+    /* === DEEP ORANGE AMBER PALETTE === */
     :root {
-      --bg: #0d0c0a;
-      --bg-dark: #080806;
-      --bg-screen: #0a0908;
-      --amber: #e8a030;
-      --amber-bright: #f5972d;
-      --amber-dim: #b87820;
-      --amber-glow: rgba(232, 160, 48, 0.6);
-      --amber-border: rgba(232, 160, 48, 0.35);
-      --amber-faint: rgba(232, 160, 48, 0.08);
+      --bg: #0a0806;
+      --bg-screen: #060504;
+      --amber: #d4740a;
+      --amber-bright: #e8850f;
+      --amber-dim: #a85a08;
+      --amber-glow: rgba(212, 116, 10, 0.7);
+      --bezel: #1a1510;
+      --bezel-light: #2a2218;
     }
 
     /* === GLOBAL RESET & BASE === */
@@ -39,303 +38,193 @@
       overflow-x: hidden;
     }
 
-    /* === CRT SCREEN CONTAINER === */
-    .crt-screen {
+    /* === CRT EFFECTS CONTAINER === */
+    .crt-wrap {
       position: relative;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 2.5rem;
     }
 
-    /* Animated scanlines overlay */
+    /* Scanlines */
     .scanlines {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       background: repeating-linear-gradient(
         0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.12) 2px,
-        rgba(0, 0, 0, 0.12) 4px
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.15) 3px,
+        rgba(0, 0, 0, 0.15) 6px
       );
       pointer-events: none;
       z-index: 1000;
-      animation: scanline-scroll 10s linear infinite;
+      animation: scan-move 8s linear infinite;
     }
 
-    @keyframes scanline-scroll {
+    @keyframes scan-move {
       0% { background-position: 0 0; }
-      100% { background-position: 0 100px; }
+      100% { background-position: 0 60px; }
     }
 
-    /* Animated phosphor glow layer */
-    .phosphor-glow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(
-        ellipse at center,
-        rgba(232, 160, 48, 0.03) 0%,
-        transparent 70%
-      );
-      pointer-events: none;
-      z-index: 998;
-      animation: phosphor-pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes phosphor-pulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
-    }
-
-    /* Vignette overlay */
+    /* Vignette */
     .vignette {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       background: radial-gradient(
         ellipse at center,
         transparent 0%,
-        transparent 40%,
-        rgba(0, 0, 0, 0.4) 80%,
-        rgba(0, 0, 0, 0.8) 100%
+        transparent 50%,
+        rgba(0, 0, 0, 0.5) 85%,
+        rgba(0, 0, 0, 0.85) 100%
       );
       pointer-events: none;
       z-index: 1001;
     }
 
-    /* Animated noise texture */
-    .noise-overlay {
+    /* Phosphor glow */
+    .glow {
       position: fixed;
-      top: -50%;
-      left: -50%;
-      right: -50%;
-      bottom: -50%;
-      width: 200%;
-      height: 200%;
-      opacity: 0.025;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(212, 116, 10, 0.04) 0%,
+        transparent 60%
+      );
       pointer-events: none;
-      z-index: 999;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      animation: noise-drift 0.5s steps(5) infinite;
+      z-index: 997;
+      animation: glow-pulse 3s ease-in-out infinite;
     }
 
-    @keyframes noise-drift {
-      0% { transform: translate(0, 0); }
-      20% { transform: translate(-2%, -2%); }
-      40% { transform: translate(1%, 2%); }
-      60% { transform: translate(-1%, 1%); }
-      80% { transform: translate(2%, -1%); }
-      100% { transform: translate(0, 0); }
+    @keyframes glow-pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
     }
 
-    /* Subtle screen flicker */
-    .crt-screen {
-      animation: flicker 6s infinite;
+    /* Flicker */
+    .crt-wrap {
+      animation: flicker 5s infinite;
     }
 
     @keyframes flicker {
       0%, 100% { opacity: 1; }
-      92% { opacity: 1; }
-      93% { opacity: 0.97; }
-      94% { opacity: 1; }
-      96% { opacity: 0.98; }
       97% { opacity: 1; }
+      97.5% { opacity: 0.94; }
+      98% { opacity: 1; }
     }
 
-    /* === HEADER / TITLE === */
+    /* === HEADER === */
     .header {
       text-align: center;
-      margin-bottom: 3rem;
-      padding: 1.5rem;
-      position: relative;
+      margin-bottom: 2.5rem;
+      padding: 1rem 0;
     }
-
-    .header::before,
-    .header::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(90%, 700px);
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--amber-border) 20%,
-        var(--amber) 50%,
-        var(--amber-border) 80%,
-        transparent 100%
-      );
-      box-shadow: 0 0 8px var(--amber-glow);
-    }
-
-    .header::before { top: 0; }
-    .header::after { bottom: 0; }
 
     .title {
-      font-size: clamp(0.65rem, 2.2vw, 1rem);
+      font-size: clamp(0.6rem, 2vw, 0.95rem);
       font-weight: 700;
-      letter-spacing: 0.35em;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       margin: 0;
+      color: var(--amber);
       text-shadow: 
-        0 0 8px var(--amber-glow),
-        0 0 20px rgba(232, 160, 48, 0.4),
-        0 0 40px rgba(232, 160, 48, 0.2);
-      transform: scaleY(0.9);
-      transform-origin: center;
+        0 0 10px var(--amber-glow),
+        0 0 25px rgba(212, 116, 10, 0.5);
     }
 
-    /* === GRID LAYOUT === */
+    /* === CIRCUIT LINES SVG LAYER === */
+    #circuit-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #circuit-svg line {
+      stroke: var(--amber-dim);
+      stroke-width: 1.5;
+      opacity: 0.4;
+    }
+
+    #circuit-svg circle {
+      fill: var(--amber);
+      opacity: 0.6;
+    }
+
+    /* === GRID === */
+    .gallery-wrap {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1.25rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 2.5rem;
+      position: relative;
+      z-index: 2;
     }
 
-    /* === NGE-STYLE MONITOR CARDS === */
+    /* === CHUNKY CRT MONITOR CARDS === */
     .card {
       position: relative;
       aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* Outer hexagonal/angular frame */
-    .card-outer {
+    /* Thick outer bezel */
+    .monitor-bezel {
       position: absolute;
       inset: 0;
-      background: var(--amber);
-      clip-path: polygon(
-        12px 0, calc(100% - 12px) 0,
-        100% 12px, 100% calc(100% - 12px),
-        calc(100% - 12px) 100%, 12px 100%,
-        0 calc(100% - 12px), 0 12px
-      );
-      opacity: 0.5;
-    }
-
-    /* Inner screen bezel */
-    .card-bezel {
-      position: absolute;
-      inset: 2px;
       background: linear-gradient(
         145deg,
-        #1a1814 0%,
-        #0f0e0c 50%,
-        #1a1814 100%
+        var(--bezel-light) 0%,
+        var(--bezel) 50%,
+        #0f0c08 100%
       );
-      clip-path: polygon(
-        11px 0, calc(100% - 11px) 0,
-        100% 11px, 100% calc(100% - 11px),
-        calc(100% - 11px) 100%, 11px 100%,
-        0 calc(100% - 11px), 0 11px
-      );
+      border: 4px solid var(--amber);
+      border-radius: 6px;
+      box-shadow:
+        0 0 0 1px var(--amber-dim),
+        inset 0 2px 4px rgba(255, 200, 100, 0.1),
+        0 0 20px rgba(212, 116, 10, 0.2);
     }
 
-    /* Screen area */
-    .card-screen {
-      position: absolute;
-      inset: 6px;
-      background: var(--bg-screen);
-      clip-path: polygon(
-        8px 0, calc(100% - 8px) 0,
-        100% 8px, 100% calc(100% - 8px),
-        calc(100% - 8px) 100%, 8px 100%,
-        0 calc(100% - 8px), 0 8px
-      );
-      box-shadow: 
-        inset 0 0 30px rgba(232, 160, 48, 0.06),
-        inset 0 0 60px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Corner brackets - top left */
-    .bracket-tl {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 14px;
-      height: 14px;
-      border-top: 2px solid var(--amber);
-      border-left: 2px solid var(--amber);
-      opacity: 0.7;
-      z-index: 3;
-    }
-
-    /* Corner brackets - top right */
-    .bracket-tr {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 14px;
-      height: 14px;
-      border-top: 2px solid var(--amber);
-      border-right: 2px solid var(--amber);
-      opacity: 0.7;
-      z-index: 3;
-    }
-
-    /* Corner brackets - bottom left */
-    .bracket-bl {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      width: 14px;
-      height: 14px;
-      border-bottom: 2px solid var(--amber);
-      border-left: 2px solid var(--amber);
-      opacity: 0.7;
-      z-index: 3;
-    }
-
-    /* Corner brackets - bottom right */
-    .bracket-br {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      width: 14px;
-      height: 14px;
-      border-bottom: 2px solid var(--amber);
-      border-right: 2px solid var(--amber);
-      opacity: 0.7;
-      z-index: 3;
-    }
-
-    /* Media container - fills available space */
-    .media-container {
+    /* Inner screen recess */
+    .monitor-screen {
       position: absolute;
       inset: 14px;
+      background: var(--bg-screen);
+      border: 3px solid var(--amber);
+      border-radius: 3px;
+      box-shadow:
+        inset 0 0 20px rgba(0, 0, 0, 0.8),
+        inset 0 0 40px rgba(212, 116, 10, 0.05),
+        0 0 8px var(--amber-glow);
+      overflow: hidden;
+    }
+
+    /* Media container */
+    .media-container {
+      position: absolute;
+      inset: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 2;
-      overflow: hidden;
     }
 
-    /* Media elements - scale to fill container */
     .card img,
     .card video {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
-      filter: 
-        drop-shadow(0 0 3px var(--amber-glow))
-        drop-shadow(0 0 10px rgba(232, 160, 48, 0.15));
     }
 
-    /* Spin animation for static images */
+    /* Spin for static images */
     .spin {
       animation: spin 6s linear infinite;
     }
@@ -344,51 +233,57 @@
       to { transform: rotate(360deg); }
     }
 
-    /* === MOBILE OPTIMIZATIONS === */
+    /* === MOBILE === */
     @media (max-width: 600px) {
-      .crt-screen {
-        padding: 1rem;
-      }
-
-      .header {
-        margin-bottom: 2rem;
-        padding: 1rem;
-      }
-
-      .title {
-        letter-spacing: 0.2em;
+      .crt-wrap {
+        padding: 1.5rem;
       }
 
       .grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1.5rem;
       }
 
-      .bracket-tl, .bracket-tr, .bracket-bl, .bracket-br {
-        width: 10px;
-        height: 10px;
+      .monitor-bezel {
+        border-width: 3px;
+      }
+
+      .monitor-screen {
+        inset: 10px;
+        border-width: 2px;
+      }
+
+      .media-container {
+        inset: 14px;
+      }
+
+      .title {
+        letter-spacing: 0.15em;
       }
     }
 
     @media (max-width: 400px) {
       .grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
+        gap: 1rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="noise-overlay"></div>
-  <div class="phosphor-glow"></div>
+  <div class="glow"></div>
   <div class="scanlines"></div>
   <div class="vignette"></div>
-  
-  <div class="crt-screen">
+
+  <div class="crt-wrap">
     <header class="header">
       <h1 class="title">PLEASE FEEL FREE TO WAIT A WHILE</h1>
     </header>
-    <div id="gallery" class="grid"></div>
+    
+    <div class="gallery-wrap">
+      <svg id="circuit-svg"></svg>
+      <div id="gallery" class="grid"></div>
+    </div>
   </div>
 
   <script>
@@ -399,13 +294,12 @@
   const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
   const ANIMATED = /\.(gif|apng|webm)$/i;
 
-  /* RENDER WITH RANDOM ORDER */
+  /* RENDER CARDS */
   (async () => {
     const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
     const files = await res.json();
     const gallery = document.getElementById("gallery");
 
-    // filter and shuffle
     const items = files.filter(f => ALLOWED.test(f.name));
     items.sort(() => Math.random() - 0.5);
 
@@ -413,27 +307,12 @@
       const card = document.createElement("div");
       card.className = "card";
 
-      // NGE-style frame layers
-      const outer = document.createElement("div");
-      outer.className = "card-outer";
-      
       const bezel = document.createElement("div");
-      bezel.className = "card-bezel";
-      
+      bezel.className = "monitor-bezel";
+
       const screen = document.createElement("div");
-      screen.className = "card-screen";
+      screen.className = "monitor-screen";
 
-      // Corner brackets
-      const bracketTL = document.createElement("div");
-      bracketTL.className = "bracket-tl";
-      const bracketTR = document.createElement("div");
-      bracketTR.className = "bracket-tr";
-      const bracketBL = document.createElement("div");
-      bracketBL.className = "bracket-bl";
-      const bracketBR = document.createElement("div");
-      bracketBR.className = "bracket-br";
-
-      // Media container
       const mediaContainer = document.createElement("div");
       mediaContainer.className = "media-container";
 
@@ -457,10 +336,130 @@
       }
 
       mediaContainer.appendChild(media);
-      card.append(outer, bezel, screen, bracketTL, bracketTR, bracketBL, bracketBR, mediaContainer);
+      card.append(bezel, screen, mediaContainer);
       gallery.appendChild(card);
     });
+
+    // Draw circuit lines after cards render
+    requestAnimationFrame(() => {
+      setTimeout(drawCircuitLines, 100);
+    });
   })();
+
+  /* DRAW BRANCHING CIRCUIT LINES */
+  function drawCircuitLines() {
+    const svg = document.getElementById("circuit-svg");
+    const cards = document.querySelectorAll(".card");
+    const wrap = document.querySelector(".gallery-wrap");
+    
+    if (!wrap || cards.length < 2) return;
+
+    const wrapRect = wrap.getBoundingClientRect();
+    svg.setAttribute("viewBox", `0 0 ${wrapRect.width} ${wrapRect.height}`);
+    svg.style.width = wrapRect.width + "px";
+    svg.style.height = wrapRect.height + "px";
+
+    // Get card centers relative to gallery-wrap
+    const centers = Array.from(cards).map(card => {
+      const rect = card.getBoundingClientRect();
+      return {
+        x: rect.left - wrapRect.left + rect.width / 2,
+        y: rect.top - wrapRect.top + rect.height / 2
+      };
+    });
+
+    // Create connections - each card connects to 1-2 nearby cards
+    const connections = [];
+    const connected = new Set();
+
+    centers.forEach((center, i) => {
+      if (connected.size >= centers.length * 1.5) return;
+      
+      // Find nearest unconnected or sparsely connected neighbors
+      const distances = centers
+        .map((other, j) => ({ j, dist: Math.hypot(other.x - center.x, other.y - center.y) }))
+        .filter(d => d.j !== i && d.dist < 400)
+        .sort((a, b) => a.dist - b.dist);
+
+      const numConnections = Math.random() > 0.5 ? 2 : 1;
+      
+      for (let k = 0; k < Math.min(numConnections, distances.length); k++) {
+        const target = distances[k].j;
+        const key = [Math.min(i, target), Math.max(i, target)].join("-");
+        
+        if (!connected.has(key)) {
+          connected.add(key);
+          connections.push({ from: center, to: centers[target] });
+        }
+      }
+    });
+
+    // Draw lines with right-angle bends
+    connections.forEach(conn => {
+      const { from, to } = conn;
+      
+      // Random bend style
+      const bendStyle = Math.random();
+      let path;
+      
+      if (bendStyle < 0.4) {
+        // Horizontal then vertical
+        const midX = from.x + (to.x - from.x) * (0.3 + Math.random() * 0.4);
+        path = [
+          { x: from.x, y: from.y },
+          { x: midX, y: from.y },
+          { x: midX, y: to.y },
+          { x: to.x, y: to.y }
+        ];
+      } else if (bendStyle < 0.8) {
+        // Vertical then horizontal
+        const midY = from.y + (to.y - from.y) * (0.3 + Math.random() * 0.4);
+        path = [
+          { x: from.x, y: from.y },
+          { x: from.x, y: midY },
+          { x: to.x, y: midY },
+          { x: to.x, y: to.y }
+        ];
+      } else {
+        // Direct diagonal
+        path = [
+          { x: from.x, y: from.y },
+          { x: to.x, y: to.y }
+        ];
+      }
+
+      // Draw path segments
+      for (let i = 0; i < path.length - 1; i++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", path[i].x);
+        line.setAttribute("y1", path[i].y);
+        line.setAttribute("x2", path[i + 1].x);
+        line.setAttribute("y2", path[i + 1].y);
+        svg.appendChild(line);
+      }
+
+      // Add node dots at bends
+      path.forEach((point, idx) => {
+        if (idx > 0 && idx < path.length - 1) {
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", point.x);
+          circle.setAttribute("cy", point.y);
+          circle.setAttribute("r", 3);
+          svg.appendChild(circle);
+        }
+      });
+    });
+  }
+
+  // Redraw on resize
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      document.getElementById("circuit-svg").innerHTML = "";
+      drawCircuitLines();
+    }, 200);
+  });
   </script>
 </body>
 </html>
