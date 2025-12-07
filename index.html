@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NOTICE // PLEASE FEEL FREE TO WAIT A WHILE</title>
+  <title>PLEASE FEEL FREE TO WAIT A WHILE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    /* === AMBER PHOSPHOR PALETTE === */
+    /* === TVA-STYLE AMBER PHOSPHOR PALETTE === */
     :root {
-      --bg: #0a0a08;
-      --bg-dark: #050504;
-      --amber: #ffb000;
-      --amber-dim: #cc8800;
-      --amber-glow: #ffcc44;
-      --amber-faint: rgba(255, 176, 0, 0.08);
-      --amber-border: rgba(255, 176, 0, 0.3);
-      --red-warning: #ff3333;
-      --scanline: rgba(0, 0, 0, 0.15);
+      --bg: #0d0c0a;
+      --bg-dark: #080806;
+      --bg-screen: #0a0908;
+      --amber: #e8a030;
+      --amber-bright: #f5972d;
+      --amber-dim: #b87820;
+      --amber-glow: rgba(232, 160, 48, 0.6);
+      --amber-border: rgba(232, 160, 48, 0.35);
+      --amber-faint: rgba(232, 160, 48, 0.08);
     }
 
     /* === GLOBAL RESET & BASE === */
@@ -46,9 +46,8 @@
       padding: 2rem;
     }
 
-    /* Scanlines overlay */
-    .crt-screen::before {
-      content: '';
+    /* Animated scanlines overlay */
+    .scanlines {
       position: fixed;
       top: 0;
       left: 0;
@@ -58,16 +57,43 @@
         0deg,
         transparent,
         transparent 2px,
-        var(--scanline) 2px,
-        var(--scanline) 4px
+        rgba(0, 0, 0, 0.12) 2px,
+        rgba(0, 0, 0, 0.12) 4px
       );
       pointer-events: none;
       z-index: 1000;
+      animation: scanline-scroll 10s linear infinite;
+    }
+
+    @keyframes scanline-scroll {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100px; }
+    }
+
+    /* Animated phosphor glow layer */
+    .phosphor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(232, 160, 48, 0.03) 0%,
+        transparent 70%
+      );
+      pointer-events: none;
+      z-index: 998;
+      animation: phosphor-pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes phosphor-pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
 
     /* Vignette overlay */
-    .crt-screen::after {
-      content: '';
+    .vignette {
       position: fixed;
       top: 0;
       left: 0;
@@ -76,39 +102,51 @@
       background: radial-gradient(
         ellipse at center,
         transparent 0%,
-        transparent 50%,
-        rgba(0, 0, 0, 0.3) 80%,
-        rgba(0, 0, 0, 0.7) 100%
+        transparent 40%,
+        rgba(0, 0, 0, 0.4) 80%,
+        rgba(0, 0, 0, 0.8) 100%
       );
       pointer-events: none;
       z-index: 1001;
     }
 
-    /* Noise texture via SVG filter */
+    /* Animated noise texture */
     .noise-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0.03;
+      top: -50%;
+      left: -50%;
+      right: -50%;
+      bottom: -50%;
+      width: 200%;
+      height: 200%;
+      opacity: 0.025;
       pointer-events: none;
       z-index: 999;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      animation: noise-drift 0.5s steps(5) infinite;
+    }
+
+    @keyframes noise-drift {
+      0% { transform: translate(0, 0); }
+      20% { transform: translate(-2%, -2%); }
+      40% { transform: translate(1%, 2%); }
+      60% { transform: translate(-1%, 1%); }
+      80% { transform: translate(2%, -1%); }
+      100% { transform: translate(0, 0); }
     }
 
     /* Subtle screen flicker */
+    .crt-screen {
+      animation: flicker 6s infinite;
+    }
+
     @keyframes flicker {
       0%, 100% { opacity: 1; }
       92% { opacity: 1; }
-      93% { opacity: 0.95; }
+      93% { opacity: 0.97; }
       94% { opacity: 1; }
-      97% { opacity: 0.97; }
-      98% { opacity: 1; }
-    }
-
-    .crt-screen {
-      animation: flicker 8s infinite;
+      96% { opacity: 0.98; }
+      97% { opacity: 1; }
     }
 
     /* === HEADER / TITLE === */
@@ -125,194 +163,176 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      width: min(90%, 800px);
-      height: 2px;
+      width: min(90%, 700px);
+      height: 1px;
       background: linear-gradient(
         90deg,
         transparent 0%,
-        var(--amber-border) 15%,
+        var(--amber-border) 20%,
         var(--amber) 50%,
-        var(--amber-border) 85%,
+        var(--amber-border) 80%,
         transparent 100%
       );
+      box-shadow: 0 0 8px var(--amber-glow);
     }
 
     .header::before { top: 0; }
     .header::after { bottom: 0; }
 
     .title {
-      font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+      font-size: clamp(0.65rem, 2.2vw, 1rem);
       font-weight: 700;
-      letter-spacing: 0.4em;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
       margin: 0;
       text-shadow: 
-        0 0 10px var(--amber),
-        0 0 20px var(--amber-dim),
-        0 0 40px rgba(255, 176, 0, 0.3);
-      transform: scaleY(0.85);
+        0 0 8px var(--amber-glow),
+        0 0 20px rgba(232, 160, 48, 0.4),
+        0 0 40px rgba(232, 160, 48, 0.2);
+      transform: scaleY(0.9);
       transform-origin: center;
-    }
-
-    .title-prefix {
-      color: var(--amber-dim);
-      font-weight: 400;
-      opacity: 0.8;
     }
 
     /* === GRID LAYOUT === */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1.5rem;
+      gap: 1.25rem;
       max-width: 1400px;
       margin: 0 auto;
       padding: 0 1rem;
     }
 
-    /* === MONITOR CARDS (EVA-STYLE) === */
+    /* === NGE-STYLE MONITOR CARDS === */
     .card {
       position: relative;
-      background: var(--bg-dark);
       aspect-ratio: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
-    /* Outer angular frame */
-    .card::before {
-      content: '';
+    /* Outer hexagonal/angular frame */
+    .card-outer {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--amber) 0%, var(--amber) 100%);
+      background: var(--amber);
       clip-path: polygon(
-        /* Top edge with cut corners */
+        12px 0, calc(100% - 12px) 0,
+        100% 12px, 100% calc(100% - 12px),
+        calc(100% - 12px) 100%, 12px 100%,
+        0 calc(100% - 12px), 0 12px
+      );
+      opacity: 0.5;
+    }
+
+    /* Inner screen bezel */
+    .card-bezel {
+      position: absolute;
+      inset: 2px;
+      background: linear-gradient(
+        145deg,
+        #1a1814 0%,
+        #0f0e0c 50%,
+        #1a1814 100%
+      );
+      clip-path: polygon(
+        11px 0, calc(100% - 11px) 0,
+        100% 11px, 100% calc(100% - 11px),
+        calc(100% - 11px) 100%, 11px 100%,
+        0 calc(100% - 11px), 0 11px
+      );
+    }
+
+    /* Screen area */
+    .card-screen {
+      position: absolute;
+      inset: 6px;
+      background: var(--bg-screen);
+      clip-path: polygon(
         8px 0, calc(100% - 8px) 0,
         100% 8px, 100% calc(100% - 8px),
         calc(100% - 8px) 100%, 8px 100%,
         0 calc(100% - 8px), 0 8px
       );
-      opacity: 0.4;
+      box-shadow: 
+        inset 0 0 30px rgba(232, 160, 48, 0.06),
+        inset 0 0 60px rgba(0, 0, 0, 0.5);
     }
 
-    /* Inner frame */
-    .card::after {
-      content: '';
+    /* Corner brackets - top left */
+    .bracket-tl {
       position: absolute;
-      inset: 2px;
-      background: var(--bg-dark);
-      clip-path: polygon(
-        7px 0, calc(100% - 7px) 0,
-        100% 7px, 100% calc(100% - 7px),
-        calc(100% - 7px) 100%, 7px 100%,
-        0 calc(100% - 7px), 0 7px
-      );
-    }
-
-    /* Corner accents */
-    .card-frame {
-      position: absolute;
-      inset: 6px;
-      border: 1px solid var(--amber-border);
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    .card-frame::before,
-    .card-frame::after {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border: 1px solid var(--amber);
-    }
-
-    .card-frame::before {
-      top: -1px;
-      left: -1px;
-      border-right: none;
-      border-bottom: none;
-    }
-
-    .card-frame::after {
-      bottom: -1px;
-      right: -1px;
-      border-left: none;
-      border-top: none;
-    }
-
-    /* Status bar at top of card */
-    .card-status {
-      position: absolute;
-      top: 8px;
+      top: 10px;
       left: 10px;
-      right: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.5rem;
-      letter-spacing: 0.15em;
-      color: var(--amber-dim);
-      opacity: 0.6;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--amber);
+      border-left: 2px solid var(--amber);
+      opacity: 0.7;
       z-index: 3;
     }
 
-    .status-indicator {
-      width: 4px;
-      height: 4px;
-      background: var(--amber);
-      box-shadow: 0 0 4px var(--amber);
-      animation: pulse 2s ease-in-out infinite;
+    /* Corner brackets - top right */
+    .bracket-tr {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--amber);
+      border-right: 2px solid var(--amber);
+      opacity: 0.7;
+      z-index: 3;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
+    /* Corner brackets - bottom left */
+    .bracket-bl {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 14px;
+      height: 14px;
+      border-bottom: 2px solid var(--amber);
+      border-left: 2px solid var(--amber);
+      opacity: 0.7;
+      z-index: 3;
     }
 
-    /* Media container */
+    /* Corner brackets - bottom right */
+    .bracket-br {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 14px;
+      height: 14px;
+      border-bottom: 2px solid var(--amber);
+      border-right: 2px solid var(--amber);
+      opacity: 0.7;
+      z-index: 3;
+    }
+
+    /* Media container - fills available space */
     .media-container {
-      position: relative;
-      z-index: 2;
-      width: calc(100% - 24px);
-      height: calc(100% - 36px);
-      margin-top: 12px;
+      position: absolute;
+      inset: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 2;
       overflow: hidden;
     }
 
-    /* Media elements - fit within container */
+    /* Media elements - scale to fill container */
     .card img,
     .card video {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       display: block;
       filter: 
-        drop-shadow(0 0 2px var(--amber))
-        drop-shadow(0 0 8px rgba(255, 176, 0, 0.2));
-    }
-
-    /* Hover glow effect */
-    .card:hover img,
-    .card:hover video {
-      filter: 
-        drop-shadow(0 0 4px var(--amber))
-        drop-shadow(0 0 15px rgba(255, 176, 0, 0.4));
-    }
-
-    .card:hover .card-frame {
-      border-color: var(--amber);
-    }
-
-    .card:hover::before {
-      opacity: 0.7;
+        drop-shadow(0 0 3px var(--amber-glow))
+        drop-shadow(0 0 10px rgba(232, 160, 48, 0.15));
     }
 
     /* Spin animation for static images */
@@ -322,24 +342,6 @@
 
     @keyframes spin {
       to { transform: rotate(360deg); }
-    }
-
-    /* === HAZARD STRIPE DECORATION === */
-    .hazard-stripe {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: repeating-linear-gradient(
-        -45deg,
-        var(--amber) 0,
-        var(--amber) 10px,
-        var(--bg-dark) 10px,
-        var(--bg-dark) 20px
-      );
-      opacity: 0.5;
-      z-index: 998;
     }
 
     /* === MOBILE OPTIMIZATIONS === */
@@ -362,8 +364,9 @@
         gap: 1rem;
       }
 
-      .card-status {
-        font-size: 0.4rem;
+      .bracket-tl, .bracket-tr, .bracket-bl, .bracket-br {
+        width: 10px;
+        height: 10px;
       }
     }
 
@@ -373,44 +376,20 @@
         gap: 0.75rem;
       }
     }
-
-    /* === LOADING STATE === */
-    .loading-text {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
-      color: var(--amber-dim);
-      opacity: 0.5;
-      z-index: 997;
-    }
-
-    .loading-text::after {
-      content: '...';
-      animation: ellipsis 1.5s infinite;
-    }
-
-    @keyframes ellipsis {
-      0% { content: '.'; }
-      33% { content: '..'; }
-      66% { content: '...'; }
-    }
   </style>
 </head>
 <body>
   <div class="noise-overlay"></div>
+  <div class="phosphor-glow"></div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  
   <div class="crt-screen">
     <header class="header">
-      <h1 class="title">
-        <span class="title-prefix">NOTICE //</span> PLEASE FEEL FREE TO WAIT A WHILE
-      </h1>
+      <h1 class="title">PLEASE FEEL FREE TO WAIT A WHILE</h1>
     </header>
     <div id="gallery" class="grid"></div>
   </div>
-  <div class="hazard-stripe"></div>
-  <div class="loading-text">MONITORING</div>
 
   <script>
   /* CONFIG */
@@ -419,17 +398,6 @@
   const path  = "Waiting%20Bar%20Collection";
   const ALLOWED  = /\.(gif|apng|webm|svg|png|jpe?g)$/i;
   const ANIMATED = /\.(gif|apng|webm)$/i;
-
-  /* Status labels for cards */
-  const statusLabels = [
-    'STANDBY', 'ACTIVE', 'NOMINAL', 'MONITORING', 
-    'PENDING', 'PROCESS', 'WAITING', 'OBSERVE',
-    'RUNNING', 'CYCLE', 'SYNC', 'BUFFER'
-  ];
-
-  function getRandomStatus() {
-    return statusLabels[Math.floor(Math.random() * statusLabels.length)];
-  }
 
   /* RENDER WITH RANDOM ORDER */
   (async () => {
@@ -445,17 +413,25 @@
       const card = document.createElement("div");
       card.className = "card";
 
-      // Corner frame decoration
-      const frame = document.createElement("div");
-      frame.className = "card-frame";
+      // NGE-style frame layers
+      const outer = document.createElement("div");
+      outer.className = "card-outer";
+      
+      const bezel = document.createElement("div");
+      bezel.className = "card-bezel";
+      
+      const screen = document.createElement("div");
+      screen.className = "card-screen";
 
-      // Status bar
-      const status = document.createElement("div");
-      status.className = "card-status";
-      status.innerHTML = `
-        <span>${getRandomStatus()}</span>
-        <span class="status-indicator"></span>
-      `;
+      // Corner brackets
+      const bracketTL = document.createElement("div");
+      bracketTL.className = "bracket-tl";
+      const bracketTR = document.createElement("div");
+      bracketTR.className = "bracket-tr";
+      const bracketBL = document.createElement("div");
+      bracketBL.className = "bracket-bl";
+      const bracketBR = document.createElement("div");
+      bracketBR.className = "bracket-br";
 
       // Media container
       const mediaContainer = document.createElement("div");
@@ -476,12 +452,12 @@
         media = document.createElement("img");
         media.src = file.download_url;
         media.loading = "lazy";
-        media.alt = "Loading indicator";
+        media.alt = "";
         if (!ANIMATED.test(file.name)) media.classList.add("spin");
       }
 
       mediaContainer.appendChild(media);
-      card.append(frame, status, mediaContainer);
+      card.append(outer, bezel, screen, bracketTL, bracketTR, bracketBL, bracketBR, mediaContainer);
       gallery.appendChild(card);
     });
   })();
